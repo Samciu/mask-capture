@@ -2,7 +2,7 @@
  * @Author: dazhao 
  * @Date: 2020-02-23 22:27:26 
  * @Last Modified by: dazhao
- * @Last Modified time: 2020-02-24 16:45:04
+ * @Last Modified time: 2020-02-25 00:19:13
  */
 
 const axios = require('axios');
@@ -34,18 +34,17 @@ const maskApi = {
 
     async getMaskList(address) {
         console.log('请求口罩类型列表', address)
-        let { data: list } = await request({
+        let { data } = await request({
             url: url[address].maskList,
             // params: { ...data }
         })
 
-        // 汕尾的接口居然返回个字符串，真是日了狗
-        if (typeof list === 'string') {
-            console.log('居然是string类型!!!!')
-            list = JSON.parse(list.replace(/\r\n|\s/g, ''))
+        // 汕尾的接口居然返回前面有个空字符，导致转json失败，真是日了狗
+        if (typeof data === 'string') {
+            data = JSON.parse(data.trim())
         }
 
-        return list
+        return data
     },
 
     preorderAdd(data, address) {
