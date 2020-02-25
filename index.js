@@ -2,16 +2,17 @@
  * @Author: dazhao 
  * @Date: 2020-02-23 21:51:20 
  * @Last Modified by: dazhao
- * @Last Modified time: 2020-02-24 16:45:24
+ * @Last Modified time: 2020-02-25 22:40:14
  */
 
+const schedule = require('node-schedule');
 const api = require("./api/mask");
-const config = require("./config.json");
+const config = require("./config");
 
 const start = async () => {
     const { name, mobile, identity, idcard, address } = config;
     const list = await api.getMaskList(address);
-    
+
     console.log('口罩类型列表：', list)
 
     // 默认拿第一个
@@ -39,7 +40,11 @@ const start = async () => {
 
     const { data } = await api.preorderAdd(baseAppointmentData, address);
 
-    console.log('结果', data);
+    console.log('结果 ' + new Date, data);
 }
 
-start();
+
+const { scheduleRule } = config;
+schedule.scheduleJob(scheduleRule, function () {
+    start();
+});
