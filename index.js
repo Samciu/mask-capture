@@ -2,7 +2,7 @@
  * @Author: dazhao 
  * @Date: 2020-02-23 21:51:20 
  * @Last Modified by: dazhao
- * @Last Modified time: 2020-02-25 22:40:14
+ * @Last Modified time: 2020-02-28 14:48:32
  */
 
 const schedule = require('node-schedule');
@@ -41,10 +41,15 @@ const start = async () => {
     const { data } = await api.preorderAdd(baseAppointmentData, address);
 
     console.log('结果 ' + new Date, data);
+
+    return data;
 }
 
 
 const { scheduleRule } = config;
-schedule.scheduleJob(scheduleRule, function () {
-    start();
+const job = schedule.scheduleJob(scheduleRule, async function () {
+    const data = await start();
+    if (data.errcode == 0) {
+        job.cancel();
+    }
 });
